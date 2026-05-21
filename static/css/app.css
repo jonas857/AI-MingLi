@@ -1,0 +1,643 @@
+/* Shared production UI layer for the standalone HTML pages. */
+:root {
+  --app-bg: #f7f4ed;
+  --app-surface: #fffdf8;
+  --app-surface-strong: #ffffff;
+  --app-ink: #202124;
+  --app-muted: #66717c;
+  --app-line: #ded5c7;
+  --app-line-soft: #ece4d7;
+  --app-primary: #146c63;
+  --app-primary-dark: #0f544e;
+  --app-gold: #b8860b;
+  --app-red: #d4392c;
+  --app-danger: #b42318;
+  --app-shadow: 0 14px 42px rgba(63, 45, 24, 0.08);
+  --app-radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  color: var(--app-ink);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(247, 244, 237, 0.98)),
+    var(--app-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+a {
+  color: var(--app-primary-dark);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(20, 108, 99, 0.22);
+  outline-offset: 2px;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+.app-shell,
+.container,
+.main-container,
+.wrap,
+main {
+  max-width: min(1180px, calc(100vw - 32px));
+}
+
+.app-card,
+.panel,
+.card,
+.user-profile-card,
+.analysis-card,
+.memory-board > section,
+.profile-rail,
+.section-card,
+.form-section {
+  border-radius: var(--app-radius);
+}
+
+.button,
+.primary,
+.submit-btn,
+.nav-btn,
+.select-btn,
+.batch-start-btn,
+.action-btn,
+.export-btn,
+.send-btn,
+.ziwei-send-btn,
+button:not(.link) {
+  min-height: 40px;
+  border-radius: var(--app-radius);
+}
+
+.button,
+.primary,
+.submit-btn,
+.batch-start-btn,
+.send-btn,
+.ziwei-send-btn {
+  background: var(--app-primary);
+  color: #fff;
+  border-color: var(--app-primary);
+}
+
+.button:hover,
+.primary:hover,
+.submit-btn:hover,
+.batch-start-btn:hover,
+.send-btn:hover,
+.ziwei-send-btn:hover {
+  background: var(--app-primary-dark);
+}
+
+.muted,
+.subtitle,
+.panel-subtitle,
+.form-copy,
+.intro-text {
+  color: var(--app-muted);
+}
+
+/* Landing */
+.page-landing body,
+body.page-landing {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100dvh;
+}
+
+body.page-landing .title-main {
+  letter-spacing: 0;
+}
+
+body.page-landing .secondary-action {
+  display: none;
+}
+
+/* Login */
+body.page-login .top-actions,
+body.page-login .tabs,
+body.page-login .form-row {
+  min-width: 0;
+}
+
+body.page-login .top-actions {
+  width: 100%;
+}
+
+body.page-login .page,
+body.page-login .shell,
+body.page-login .intro,
+body.page-login .panel {
+  min-width: 0;
+}
+
+/* Birth profile */
+body.page-birth .logo {
+  display: none;
+}
+
+body.page-birth {
+  padding: 24px 12px 36px;
+}
+
+body.page-birth .container,
+body.page-birth .top-nav,
+body.page-birth .nav-links,
+body.page-birth .form-section {
+  min-width: 0;
+}
+
+body.page-birth .gender-symbol {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--app-primary);
+}
+
+body.page-birth .subtitle {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+body.page-birth .top-nav,
+body.page-analysis .top-nav,
+body.page-memory header,
+body.page-home header {
+  backdrop-filter: blur(16px);
+}
+
+/* Analysis */
+body.page-analysis .nav-content,
+body.page-analysis .nav-actions,
+body.page-analysis .profile-header,
+body.page-analysis .profile-info,
+body.page-analysis .dimension-controls,
+body.page-analysis .card-actions,
+body.page-analysis .follow-up-actions {
+  min-width: 0;
+}
+
+body.page-analysis .fade-in {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+body.page-analysis .nav-title span:first-child,
+body.page-analysis .progress-icon,
+body.page-analysis .layer-title span:first-child,
+body.page-analysis .card-icon {
+  display: none;
+}
+
+body.page-analysis .debug-float {
+  display: none !important;
+}
+
+body.page-analysis .plate-table-wrap,
+body.page-analysis .dayun-scroll,
+body.page-analysis .ziwei-chart-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.page-analysis .plate-table {
+  min-width: 680px;
+}
+
+body.page-analysis .analysis-result,
+body.page-analysis .result-content,
+body.page-analysis .follow-up-result {
+  overflow-wrap: anywhere;
+}
+
+/* Divination tools */
+body.page-liuyao,
+body.page-qimen {
+  color-scheme: light;
+  min-height: 100dvh;
+  background: var(--app-bg);
+  color: var(--app-ink);
+}
+
+body.page-liuyao .wrap,
+body.page-qimen .wrap {
+  width: min(1120px, calc(100vw - 32px));
+  max-width: none;
+  padding: 28px 0 56px;
+}
+
+body.page-liuyao .back-btn,
+body.page-qimen .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  color: var(--app-primary-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+body.page-liuyao h1,
+body.page-qimen h1 {
+  margin: 0 0 16px !important;
+  font-size: clamp(26px, 4vw, 38px);
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+body.page-liuyao .card,
+body.page-qimen .card,
+body.page-liuyao .chat-container,
+body.page-qimen .chat-container {
+  background: var(--app-surface-strong);
+  color: var(--app-ink);
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+}
+
+body.page-liuyao .row,
+body.page-qimen .row {
+  align-items: stretch;
+}
+
+body.page-liuyao input,
+body.page-qimen input {
+  background: #fff;
+  color: var(--app-ink);
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius);
+}
+
+body.page-liuyao button,
+body.page-qimen button {
+  background: #fff;
+  color: var(--app-primary-dark);
+  border: 1px solid var(--app-line);
+  font-weight: 700;
+}
+
+body.page-liuyao #go,
+body.page-qimen #go,
+body.page-liuyao .send-btn,
+body.page-qimen .send-btn {
+  background: var(--app-primary);
+  color: #fff;
+  border-color: var(--app-primary);
+}
+
+body.page-liuyao .stage,
+body.page-qimen .stage {
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border-radius: var(--app-radius);
+  border-color: var(--app-line);
+}
+
+body.page-liuyao .line,
+body.page-qimen .cell {
+  background: #fffaf0;
+  border-color: var(--app-line-soft);
+  color: var(--app-ink);
+}
+
+body.page-qimen .grid9 {
+  border-color: var(--app-line);
+  overflow: hidden;
+  background: var(--app-line);
+}
+
+body.page-qimen .cell {
+  border-color: var(--app-line);
+}
+
+body.page-liuyao .chat-header,
+body.page-qimen .chat-header {
+  border-bottom-color: var(--app-line);
+}
+
+body.page-liuyao .chat-title,
+body.page-qimen .chat-title,
+body.page-liuyao .message.assistant,
+body.page-qimen .message.assistant {
+  color: var(--app-ink);
+}
+
+body.page-liuyao .chat-body,
+body.page-qimen .chat-body,
+body.page-liuyao .chat-input-area,
+body.page-qimen .chat-input-area {
+  background: var(--app-surface);
+  border-color: var(--app-line);
+}
+
+body.page-liuyao .message.user,
+body.page-qimen .message.user {
+  background: var(--app-primary);
+  color: #fff;
+}
+
+body.page-liuyao .chat-input,
+body.page-qimen .chat-input {
+  background: #fff;
+  color: var(--app-ink);
+}
+
+@media (max-width: 980px) {
+  body.page-landing {
+    height: auto;
+    min-height: 100dvh;
+    overflow: auto;
+  }
+
+  body.page-landing .main-container {
+    display: block;
+    min-height: 100dvh;
+  }
+
+  body.page-landing .header {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 18px 12px;
+    gap: 12px;
+    width: 100%;
+  }
+
+  body.page-landing .content-section {
+    padding: 40px 24px 28px;
+  }
+
+  body.page-landing .visual-section {
+    min-height: 360px;
+  }
+
+  body.page-landing .logo span {
+    white-space: nowrap;
+  }
+
+  body.page-landing .nav-actions {
+    display: none;
+  }
+
+  body.page-landing .nav-link {
+    display: none;
+  }
+
+  body.page-landing .cta-button {
+    white-space: normal;
+    min-width: 78px;
+    padding: 10px 12px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  body.page-analysis .nav-content,
+  body.page-analysis .profile-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body.page-analysis .profile-actions {
+    margin-left: 0;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  body.page-analysis .profile-edit-link {
+    width: 100%;
+  }
+
+  body.page-analysis .nav-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  body.page-analysis .nav-btn {
+    justify-content: center;
+    white-space: normal;
+  }
+
+  body.page-analysis .dimension-controls,
+  body.page-analysis .card-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell,
+  .container,
+  .main-container,
+  .wrap,
+  main {
+    max-width: calc(100vw - 24px);
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  body.page-login .topbar,
+  body.page-birth .top-nav,
+  body.page-home .topbar,
+  body.page-memory .bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  body.page-birth .container {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  body.page-login .page {
+    width: calc(100vw - 24px);
+    overflow-x: hidden;
+  }
+
+  body.page-login .top-actions,
+  body.page-birth .nav-links,
+  body.page-home nav,
+  body.page-memory nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  body.page-login .top-link,
+  body.page-birth .nav-links a,
+  body.page-home .nav-link,
+  body.page-memory nav a,
+  body.page-memory button.link {
+    justify-content: center;
+    text-align: center;
+    min-height: 40px;
+    padding: 9px 10px;
+    border: 1px solid var(--app-line);
+    border-radius: var(--app-radius);
+    background: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+  }
+
+  body.page-birth .nav-links {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    width: 100% !important;
+  }
+
+  body.page-birth .nav-links a {
+    min-width: 0;
+    width: 100%;
+  }
+
+  body.page-login .top-link {
+    min-width: 0;
+    width: 100%;
+    flex: initial;
+  }
+
+  body.page-login h1 {
+    font-size: clamp(28px, 7.2vw, 32px);
+    max-width: 100%;
+    line-height: 1.16;
+  }
+
+  body.page-login .intro-text {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  body.page-login .shell,
+  body.page-home .home-shell,
+  body.page-memory .grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.page-analysis .main-container {
+    padding: 12px;
+  }
+
+  body.page-analysis .user-profile-card,
+  body.page-analysis .analysis-card,
+  body.page-analysis .batch-analysis-section,
+  body.page-analysis .tool-section,
+  body.page-analysis .ziwei-section {
+    padding: 14px;
+  }
+
+  body.page-analysis .nav-actions,
+  body.page-analysis .dimension-controls,
+  body.page-analysis .card-actions,
+  body.page-analysis .follow-up-actions {
+    grid-template-columns: 1fr;
+  }
+
+  body.page-analysis .analysis-card-header {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  body.page-analysis .follow-up-input {
+    min-height: 104px;
+  }
+
+  body.page-liuyao .wrap,
+  body.page-qimen .wrap {
+    width: calc(100vw - 24px);
+    padding: 18px 0 36px;
+  }
+
+  body.page-liuyao .row,
+  body.page-qimen .row,
+  body.page-liuyao .chat-input-area,
+  body.page-qimen .chat-input-area {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  body.page-liuyao input[type="text"],
+  body.page-qimen input[type="text"],
+  body.page-qimen input[type="datetime-local"] {
+    min-width: 0;
+    width: 100%;
+  }
+
+  body.page-liuyao .chat-container,
+  body.page-qimen .chat-container {
+    height: 62dvh;
+    min-height: 360px;
+  }
+
+  body.page-qimen .grid9 {
+    width: 100%;
+  }
+
+  body.page-qimen .cell {
+    padding: 8px;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  body.page-landing .nav-actions {
+    gap: 8px;
+  }
+
+  body.page-landing .nav-link {
+    display: none;
+  }
+
+  body.page-analysis .plate-table {
+    min-width: 620px;
+  }
+
+  body.page-analysis .action-btn,
+  body.page-analysis .select-btn,
+  body.page-analysis .nav-btn {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  body.page-liuyao h1,
+  body.page-qimen h1 {
+    font-size: 24px;
+  }
+}

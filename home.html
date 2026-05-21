@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用户主页 | 八字命理分析</title>
+  <style>
+    :root {
+      --bg: #f7f3eb;
+      --surface: #fffdf8;
+      --surface-strong: #ffffff;
+      --ink: #202124;
+      --muted: #69737d;
+      --line: #ddd3c3;
+      --line-soft: #ece3d5;
+      --primary: #146c63;
+      --primary-dark: #0f544e;
+      --accent: #a45f21;
+      --gold: #c99b45;
+      --danger: #b42318;
+      --shadow: 0 16px 36px rgba(54, 44, 26, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(201, 155, 69, 0.13), transparent 34rem),
+        linear-gradient(180deg, #fbf7ef 0%, var(--bg) 46%, #f4efe5 100%);
+      color: var(--ink);
+    }
+
+    a, button {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(221, 211, 195, 0.86);
+      background: rgba(255, 253, 248, 0.9);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar {
+      width: min(1280px, calc(100% - 32px));
+      min-height: 68px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #cdbd9d;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #fff9ec;
+      color: var(--accent);
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(54, 44, 26, 0.08);
+      flex: 0 0 auto;
+    }
+
+    .brand-copy {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-copy strong {
+      font-size: 18px;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .brand-copy span {
+      color: var(--muted);
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link,
+    button.nav-link {
+      min-height: 36px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: transparent;
+      color: #47515a;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .nav-link:hover,
+    button.nav-link:hover {
+      border-color: #d6c7b2;
+      background: #fff9ed;
+      color: var(--primary-dark);
+    }
+
+    .page {
+      width: min(1280px, calc(100% - 32px));
+      margin: 24px auto 52px;
+      display: grid;
+      gap: 18px;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 30px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .hero-strip {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(135deg, #fffdf8 0%, #f1eadf 100%);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(380px, 0.85fr);
+      gap: 20px;
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    .hero-copy {
+      display: grid;
+      align-content: space-between;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      border: 1px solid #d6c6a7;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #fff8e8;
+      color: #70511d;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .hero-copy p {
+      margin-bottom: 0;
+      max-width: 68ch;
+    }
+
+    .status {
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .status.error { color: var(--danger); }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button {
+      min-height: 40px;
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 13px;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 900;
+      transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .button:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .button:active {
+      transform: scale(0.98);
+    }
+
+    .button.secondary {
+      border-color: #b9d4cf;
+      background: #fffdf8;
+      color: var(--primary-dark);
+    }
+
+    .button.secondary:hover {
+      background: #edf6f3;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat-card {
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .stat-card strong {
+      font-size: 24px;
+      line-height: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-alert {
+      border: 1px solid #d8bd8d;
+      border-radius: 8px;
+      background: #fff8e8;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 10px 24px rgba(54, 44, 26, 0.05);
+    }
+
+    .profile-alert p {
+      margin: 0;
+      color: #684413;
+      line-height: 1.65;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 340px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .profile-rail {
+      position: sticky;
+      top: 88px;
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-strong);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel.tight {
+      padding: 14px;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+    }
+
+    .panel-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .profile-seal {
+      min-height: 118px;
+      border: 1px solid #e2d4bf;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(20, 108, 99, 0.08), rgba(164, 95, 33, 0.08)),
+        #fffaf1;
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+      align-content: center;
+    }
+
+    .profile-seal strong {
+      font-size: 26px;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-seal span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .facts {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    .fact {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 12px;
+      border-bottom: 1px solid #eee7dc;
+      padding-bottom: 8px;
+      align-items: start;
+    }
+
+    .fact span:first-child {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .fact span:last-child {
+      text-align: right;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .memory-board {
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .module-card {
+      min-height: 128px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 14px;
+      display: grid;
+      align-content: space-between;
+      gap: 14px;
+      transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    }
+
+    .module-card:hover {
+      border-color: #cdbb9d;
+      background: #fff8eb;
+      transform: translateY(-1px);
+    }
+
+    .module-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .module-mark {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #d7c6a9;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #fff8e8;
+      color: var(--accent);
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .module-count {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .module-card strong,
+    .module-card span {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .module-card strong {
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .module-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .next-action-box {
+      display: grid;
+      gap: 10px;
+    }
+
+    .next-action-box p {
+      margin: 0;
+      color: #3a4148;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .next-action-box .button {
+      width: 100%;
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .portrait-card {
+      display: grid;
+      gap: 10px;
+    }
+
+    .portrait-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .portrait-headline strong {
+      font-size: 18px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .portrait-headline span {
+      border: 1px solid #eadfce;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #fff9ed;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .portrait-summary {
+      margin: 0;
+      color: #3a4148;
+      font-size: 14px;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .portrait-points {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .portrait-points li {
+      border-left: 3px solid var(--accent);
+      padding-left: 9px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.45;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .thread-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .thread-item {
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 12px;
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .thread-item:hover {
+      border-color: #cdbb9d;
+      background: #fff8eb;
+    }
+
+    .thread-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .thread-top strong {
+      font-size: 14px;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .thread-top span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .thread-item p {
+      margin: 0;
+      color: #3a4148;
+      font-size: 13px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .thread-item small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .snapshot-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .snapshot-item {
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 12px;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px 12px;
+      align-items: center;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .snapshot-item:hover {
+      border-color: #cdbb9d;
+      background: #fff8eb;
+    }
+
+    .snapshot-item strong {
+      font-size: 14px;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .snapshot-item p {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: #3a4148;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .snapshot-item small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .snapshot-tag {
+      justify-self: end;
+      border: 1px solid #eadfce;
+      border-radius: 999px;
+      padding: 3px 8px;
+      color: var(--accent);
+      background: #fff9ed;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .panel-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .empty {
+      border: 1px dashed #d3c6b5;
+      border-radius: 8px;
+      background: #f5efe5;
+      padding: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .skeleton {
+      width: 100%;
+      min-height: 94px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #eee5d8 0%, #fff9ef 48%, #eee5d8 100%);
+      background-size: 240% 100%;
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 100% 0; }
+      to { background-position: -100% 0; }
+    }
+
+    @media (max-width: 1100px) {
+      .hero-strip,
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-rail {
+        position: static;
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .insight-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        width: min(100% - 24px, 1280px);
+        min-height: auto;
+        padding: 14px 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      nav {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .nav-link,
+      button.nav-link {
+        flex: 0 0 auto;
+      }
+
+      .page {
+        width: min(100% - 24px, 1280px);
+        margin-top: 16px;
+        gap: 14px;
+      }
+
+      .hero-strip,
+      .panel {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .profile-alert,
+      .panel-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stat-grid,
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .brand-copy strong {
+        font-size: 16px;
+      }
+
+      .brand-copy span {
+        white-space: normal;
+      }
+
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .fact {
+        grid-template-columns: 1fr;
+        gap: 3px;
+      }
+
+      .fact span:last-child {
+        text-align: left;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="page-home">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="/home" aria-label="返回用户主页">
+        <span class="brand-mark">命</span>
+        <span class="brand-copy">
+          <strong>八字命理分析</strong>
+          <span id="accountLine">正在读取账号...</span>
+        </span>
+      </a>
+      <nav aria-label="主要导航">
+        <a class="nav-link" href="/birth-input">出生资料</a>
+        <a class="nav-link" href="/analysis">八字分析</a>
+        <a class="nav-link" href="/liuyao">六爻</a>
+        <a class="nav-link" href="/qimen">奇门</a>
+        <a class="nav-link" href="/memory">记忆</a>
+        <button class="nav-link" id="logoutBtn" type="button">退出</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero-strip" aria-label="用户主页总览">
+      <div class="hero-copy">
+        <div>
+          <div class="eyebrow">命盘工作台</div>
+          <h1 id="welcomeTitle">欢迎回来</h1>
+          <p class="muted" id="welcomeText">正在恢复你的出生资料、分析记录和记忆整理。</p>
+        </div>
+        <div>
+          <div class="hero-actions">
+            <a class="button" href="/analysis">进入八字分析</a>
+            <a class="button secondary" href="/memory">查看记忆整理</a>
+          </div>
+          <div class="status" id="statusLine"></div>
+        </div>
+      </div>
+
+      <div class="stat-grid" aria-label="主页数据概览">
+        <div class="stat-card">
+          <span>命盘状态</span>
+          <strong id="statChart">读取中</strong>
+        </div>
+        <div class="stat-card">
+          <span>分析记录</span>
+          <strong id="statAnalysis">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>记忆条目</span>
+          <strong id="statMemory">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>术数对话</span>
+          <strong id="statChats">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="profile-alert" id="profileNotice" hidden>
+      <p>当前账号还没有绑定出生资料。填写一次后，命盘、分析和后续对话都会围绕同一份出生资料沉淀。</p>
+      <a class="button" href="/birth-input">填写出生资料</a>
+    </section>
+
+    <section class="workspace-grid">
+      <aside class="profile-rail">
+        <article class="panel">
+          <div class="panel-title">
+            <h2>出生档案</h2>
+            <small id="profileBadge">读取中</small>
+          </div>
+          <div class="profile-seal">
+            <span id="profileSubline">命盘资料</span>
+            <strong id="profileName">未绑定</strong>
+          </div>
+          <div class="facts" id="profileFacts"></div>
+          <div class="profile-actions">
+            <a class="button secondary" href="/birth-input">更新资料</a>
+            <a class="button" href="/analysis">进入分析</a>
+          </div>
+        </article>
+
+        <article class="panel tight">
+          <div class="panel-title">
+            <h2>下一步</h2>
+          </div>
+          <div class="next-action-box">
+            <p id="nextAction">正在判断下一步。</p>
+            <a class="button" id="nextActionLink" href="/analysis">继续</a>
+          </div>
+        </article>
+      </aside>
+
+      <section class="memory-board">
+        <article class="panel">
+          <div class="panel-title">
+            <h2>核心入口</h2>
+            <small>八字、六爻、奇门与记忆</small>
+          </div>
+          <div class="module-grid" id="quickLinks"></div>
+        </article>
+
+        <section class="insight-grid" aria-label="画像与追问">
+          <article class="panel">
+            <div class="panel-title">
+              <h2>用户画像</h2>
+              <small id="portraitStatus">整理中</small>
+            </div>
+            <div class="portrait-card" id="userPortrait">
+              <div class="skeleton"></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">
+              <h2>近期追问脉络</h2>
+              <small id="threadStatus">整理中</small>
+            </div>
+            <div class="thread-list" id="recentThread">
+              <div class="skeleton"></div>
+            </div>
+          </article>
+        </section>
+
+        <article class="panel">
+          <div class="panel-title">
+            <h2>记忆速览</h2>
+            <small id="memorySnapshotCount">读取中</small>
+          </div>
+          <div class="snapshot-list" id="memorySnapshot">
+            <div class="skeleton"></div>
+          </div>
+          <div class="panel-footer">
+            <a class="button secondary" href="/memory">查看全部记忆</a>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const accountLine = document.getElementById('accountLine');
+    const welcomeTitle = document.getElementById('welcomeTitle');
+    const welcomeText = document.getElementById('welcomeText');
+    const statusLine = document.getElementById('statusLine');
+    const profileNotice = document.getElementById('profileNotice');
+    const profileFacts = document.getElementById('profileFacts');
+    const profileBadge = document.getElementById('profileBadge');
+    const profileName = document.getElementById('profileName');
+    const profileSubline = document.getElementById('profileSubline');
+    const nextAction = document.getElementById('nextAction');
+    const nextActionLink = document.getElementById('nextActionLink');
+    const memorySnapshot = document.getElementById('memorySnapshot');
+    const memorySnapshotCount = document.getElementById('memorySnapshotCount');
+    const userPortrait = document.getElementById('userPortrait');
+    const portraitStatus = document.getElementById('portraitStatus');
+    const recentThread = document.getElementById('recentThread');
+    const threadStatus = document.getElementById('threadStatus');
+    const quickLinks = document.getElementById('quickLinks');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const statChart = document.getElementById('statChart');
+    const statAnalysis = document.getElementById('statAnalysis');
+    const statMemory = document.getElementById('statMemory');
+    const statChats = document.getElementById('statChats');
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+
+    function text(value, fallback = '未填写') {
+      return value === undefined || value === null || value === '' ? fallback : String(value);
+    }
+
+    function compactText(value, maxLen = 160) {
+      const normalized = text(value, '').replace(/\s+/g, ' ').trim();
+      if (!normalized) return '';
+      return normalized.length > maxLen ? `${normalized.slice(0, maxLen)}...` : normalized;
+    }
+
+    function formatDateTime(value) {
+      if (!value) return '暂无';
+      return String(value).replace('T', ' ').slice(0, 19);
+    }
+
+    function sortDateValue(value) {
+      const time = Date.parse(value || '');
+      return Number.isFinite(time) ? time : 0;
+    }
+
+    function numberText(value) {
+      const n = Number(value || 0);
+      return Number.isFinite(n) ? String(n) : '0';
+    }
+
+    function fact(label, value) {
+      const div = document.createElement('div');
+      div.className = 'fact';
+      div.innerHTML = `<span>${escapeHtml(label)}</span><span>${escapeHtml(text(value))}</span>`;
+      return div;
+    }
+
+    function calendarLabel(info, metadata) {
+      const calendar = info.calendar_type || metadata.calendar_type;
+      const lunarLeap = info.lunar_is_leap_month || metadata.lunar_is_leap_month;
+      if (calendar === 'lunar') return lunarLeap ? '农历（闰月）' : '农历';
+      if (calendar === 'solar') return '阳历';
+      return '未填写';
+    }
+
+    function genderLabel(value) {
+      if (value === 1 || value === '1' || value === '男') return '男';
+      if (value === 0 || value === '0' || value === '女') return '女';
+      return '未填写';
+    }
+
+    function parseJsonObject(value) {
+      if (!value) return null;
+      if (typeof value === 'object') return value;
+      if (typeof value !== 'string') return null;
+      try {
+        const parsed = JSON.parse(value);
+        return parsed && typeof parsed === 'object' ? parsed : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function pillarText(value) {
+      if (!value) return '';
+      if (typeof value === 'string') return value.trim();
+      if (typeof value !== 'object') return '';
+      const direct = text(value.干支 || value.ganzhi, '').trim();
+      if (direct) return direct;
+      const stemRaw = value.天干 || value.stem;
+      const branchRaw = value.地支 || value.branch;
+      const stem = typeof stemRaw === 'object' ? text(stemRaw.天干 || stemRaw.name || stemRaw.value, '') : text(stemRaw, '');
+      const branch = typeof branchRaw === 'object' ? text(branchRaw.地支 || branchRaw.name || branchRaw.value, '') : text(branchRaw, '');
+      return stem && branch ? `${stem}${branch}` : '';
+    }
+
+    function fourPillarsFromMapping(value) {
+      if (!value || typeof value !== 'object') return '';
+      const pillars = ['年柱', '月柱', '日柱', '时柱'].map((key) => pillarText(value[key])).filter(Boolean);
+      return pillars.length === 4 ? pillars.join(' ') : '';
+    }
+
+    function extractFourPillars(value) {
+      const payloads = [];
+      const root = parseJsonObject(value);
+      if (root) payloads.push(root);
+      if (root && root.raw_data) payloads.push(parseJsonObject(root.raw_data));
+      if (root && root.text_result) payloads.push(parseJsonObject(root.text_result));
+      if (root && root.raw_data && root.raw_data.text_result) payloads.push(parseJsonObject(root.raw_data.text_result));
+
+      for (const payload of payloads.filter(Boolean)) {
+        for (const key of ['八字', '四柱八字', 'bazi', 'bazi_text', 'four_pillars', 'baziFourPillars', 'fourPillars']) {
+          const candidate = payload[key];
+          if (typeof candidate === 'string' && candidate.trim()) return candidate.trim();
+          const mapped = fourPillarsFromMapping(candidate);
+          if (mapped) return mapped;
+        }
+        const mapped = fourPillarsFromMapping(payload);
+        if (mapped) return mapped;
+      }
+      return '';
+    }
+
+    async function refreshBaziSummary(home) {
+      if (home.bazi && home.bazi.four_pillars) return;
+      try {
+        const latest = await fetchJson(`/api/user/bazi-data?_=${Date.now()}`);
+        const baziInfo = latest.bazi_info || {};
+        const pillars = extractFourPillars(baziInfo);
+        home.bazi = {
+          ...(home.bazi || {}),
+          exists: true,
+          has_chart: true,
+          source: (home.bazi && home.bazi.source) || 'bazi_data_api',
+          user_info: { ...((home.bazi && home.bazi.user_info) || {}), ...(latest.user_info || {}) },
+          timestamp: (home.bazi && home.bazi.timestamp) || latest.timestamp,
+          four_pillars: pillars || (home.bazi && home.bazi.four_pillars),
+        };
+      } catch (error) {
+        // The profile card can still render metadata if the chart endpoint is unavailable.
+      }
+    }
+
+    function getMemoryItems(memorySummary) {
+      const categories = (memorySummary && memorySummary.categories) || {};
+      const byId = new Map();
+      Object.values(categories).forEach((bucket) => {
+        ((bucket && bucket.items) || []).forEach((item) => {
+          if (!item || typeof item !== 'object') return;
+          byId.set(item.id || `${item.type}-${item.dimension}-${item.updated_at}-${byId.size}`, item);
+        });
+      });
+      return Array.from(byId.values());
+    }
+
+    function normalizeThemeName(item) {
+      const raw = text(item.dimension || item.domain || item.type || '综合关注', '综合关注').trim();
+      if (!raw || raw === 'global' || raw === 'bazi') return '综合关注';
+      const lower = raw.toLowerCase();
+      if (lower.includes('career') || raw.includes('事业') || raw.includes('工作')) return '事业与发展';
+      if (lower.includes('relationship') || raw.includes('感情') || raw.includes('婚')) return '感情婚姻';
+      if (raw.includes('大运') || raw.includes('流年') || raw.includes('运势')) return '大运流年';
+      if (raw.includes('健康') || raw.includes('身心')) return '健康与状态';
+      if (raw.includes('六爻')) return '六爻问事';
+      if (raw.includes('奇门')) return '奇门遁甲';
+      return raw;
+    }
+
+    function memoryTypeLabel(item) {
+      if (item.__snapshotType) return item.__snapshotType;
+      if (item.type === 'domain_insight') return '稳定判断';
+      if (item.type === 'episode') return '追问片段';
+      if (item.type === 'support_profile') return '画像偏好';
+      return '记忆';
+    }
+
+    function sortedMemoryItems(items) {
+      return (items || [])
+        .filter((item) => item && typeof item === 'object')
+        .slice()
+        .sort((a, b) => sortDateValue(b.updated_at || b.created_at) - sortDateValue(a.updated_at || a.created_at));
+    }
+
+    function buildMemorySnapshotItems(memorySummary) {
+      const categories = (memorySummary && memorySummary.categories) || {};
+      const selected = [];
+      const seen = new Set();
+      const addItems = (items, label) => {
+        sortedMemoryItems(items).forEach((item) => {
+          if (selected.length >= 3) return;
+          const id = item.id || `${item.type}-${item.dimension}-${item.updated_at}-${item.content}`;
+          if (seen.has(id)) return;
+          seen.add(id);
+          selected.push({ ...item, __snapshotType: label });
+        });
+      };
+
+      addItems((categories.pinned || {}).items, '置顶');
+      addItems((categories.domain_insight || {}).items, '稳定判断');
+      addItems((categories.episode || {}).items, '追问片段');
+      addItems((categories.support_profile || {}).items, '画像偏好');
+      return selected;
+    }
+
+    function buildFallbackPortrait(memorySummary) {
+      const categories = (memorySummary && memorySummary.categories) || {};
+      const sources = [
+        ...sortedMemoryItems((categories.support_profile || {}).items),
+        ...sortedMemoryItems((categories.domain_insight || {}).items),
+        ...sortedMemoryItems((categories.episode || {}).items),
+      ];
+      const points = [];
+      sources.forEach((item) => {
+        const content = compactText(item.content, 46);
+        if (content && !points.includes(content) && points.length < 3) points.push(content);
+      });
+      const summary = points[0] || '';
+      return {
+        headline: summary ? '偏好已沉淀' : '画像待完善',
+        summary,
+        points: points.slice(summary === points[0] ? 1 : 0, 3),
+        updated_at: sources[0] && (sources[0].updated_at || sources[0].created_at),
+      };
+    }
+
+    function buildRecentThreadItems(memorySummary) {
+      const categories = (memorySummary && memorySummary.categories) || {};
+      const episodes = sortedMemoryItems((categories.episode || {}).items);
+      const grouped = new Map();
+      episodes.forEach((item) => {
+        const theme = normalizeThemeName(item);
+        const key = theme || '综合关注';
+        const current = grouped.get(key) || { theme: key, count: 0, items: [], latest: 0 };
+        current.count += 1;
+        current.items.push(item);
+        current.latest = Math.max(current.latest, sortDateValue(item.updated_at || item.created_at));
+        grouped.set(key, current);
+      });
+      return Array.from(grouped.values())
+        .sort((a, b) => b.latest - a.latest)
+        .slice(0, 3)
+        .map((group) => {
+          const latest = group.items[0] || {};
+          return {
+            theme: group.theme,
+            count: group.count,
+            summary: compactText(latest.content, 92),
+            updated_at: latest.updated_at || latest.created_at,
+          };
+        });
+    }
+
+    function getChatTotal(home) {
+      const chats = home.chats || {};
+      return Object.values(chats).reduce((sum, item) => sum + Number((item && item.message_count) || 0), 0);
+    }
+
+    function hasSavedBirthProfile(home) {
+      const profileMetadata = (home.profile && home.profile.metadata) || {};
+      const accountMetadata = (home.account && home.account.metadata) || {};
+      const accountBirthProfile = accountMetadata.registration_birth_profile || {};
+      return Boolean(
+        (home.bazi && home.bazi.exists) ||
+        home.profile_complete ||
+        profileMetadata.birth_date ||
+        profileMetadata.birth_time ||
+        accountBirthProfile.birth_date ||
+        accountBirthProfile.birth_time
+      );
+    }
+
+    function renderStats(home, memorySummary) {
+      const hasSavedBazi = hasSavedBirthProfile(home);
+      const memoryCount = getMemoryItems(memorySummary || {}).length;
+      statChart.textContent = hasSavedBazi ? '已保存' : '待补全';
+      statAnalysis.textContent = numberText(home.analysis && home.analysis.total_count);
+      statMemory.textContent = numberText(memoryCount);
+      statChats.textContent = numberText(getChatTotal(home));
+    }
+
+    function renderProfile(home) {
+      profileFacts.innerHTML = '';
+      const info = (home.bazi && home.bazi.user_info) || {};
+      const profile = home.profile || {};
+      const accountMetadata = (home.account && home.account.metadata) || {};
+      const accountBirthProfile = accountMetadata.registration_birth_profile || {};
+      const metadata = { ...accountBirthProfile, ...(profile.metadata || {}) };
+      const hasSavedBazi = hasSavedBirthProfile(home);
+      const displayName = info.name || profile.username || metadata.name || home.username || (home.account && home.account.display_name) || '未绑定';
+      const birthTime = info.display_birth_time || info.birth_time || metadata.birth_time;
+
+      profileName.textContent = displayName;
+      profileSubline.textContent = hasSavedBazi ? '命盘已归档' : '等待补全出生资料';
+      profileBadge.textContent = hasSavedBazi ? '已保存' : '待补全';
+      profileFacts.appendChild(fact('姓名', displayName));
+      profileFacts.appendChild(fact('性别', genderLabel(info.gender ?? metadata.gender)));
+      profileFacts.appendChild(fact('历法', calendarLabel(info, metadata)));
+      profileFacts.appendChild(fact('出生时间', birthTime));
+      profileFacts.appendChild(fact('四柱', home.bazi && home.bazi.four_pillars));
+      profileFacts.appendChild(fact('更新时间', formatDateTime((home.bazi && home.bazi.timestamp) || metadata.updated_at)));
+      profileNotice.hidden = !(home.needs_profile && !hasSavedBazi);
+      nextAction.textContent = hasSavedBazi
+        ? '继续做一次分析，或进入记忆页查看长期沉淀。'
+        : '先补全出生资料，后续分析会围绕同一份命盘沉淀。';
+      nextActionLink.href = hasSavedBazi ? '/analysis' : '/birth-input';
+      nextActionLink.textContent = hasSavedBazi ? '继续分析' : '填写资料';
+    }
+
+    function renderMemorySnapshot(memorySummary, home) {
+      memorySnapshot.innerHTML = '';
+      if (!hasSavedBirthProfile(home)) {
+        memorySnapshotCount.textContent = '待补全';
+        memorySnapshot.innerHTML = '<div class="empty">补全出生资料后，这里会显示最多 3 条关键记忆。</div>';
+        return;
+      }
+
+      const items = buildMemorySnapshotItems(memorySummary || {});
+      memorySnapshotCount.textContent = items.length ? `${items.length} 条速览` : '暂无记忆';
+      if (!items.length) {
+        memorySnapshot.innerHTML = '<div class="empty">还没有可展示的记忆。完成一次分析或追问后，这里会出现简短摘要。</div>';
+        return;
+      }
+
+      items.forEach((item) => {
+        const title = normalizeThemeName(item);
+        const summary = compactText(item.content, 88) || '这条记忆暂无摘要，可进入记忆页查看详情。';
+        const div = document.createElement('a');
+        div.className = 'snapshot-item';
+        div.href = '/memory';
+        div.innerHTML = `
+          <strong>${escapeHtml(title)}</strong>
+          <span class="snapshot-tag">${escapeHtml(memoryTypeLabel(item))}</span>
+          <p>${escapeHtml(summary)}</p>
+          <small>${escapeHtml(formatDateTime(item.updated_at || item.created_at))}</small>
+        `;
+        memorySnapshot.appendChild(div);
+      });
+    }
+
+    function renderUserPortrait(memorySummary, portraitResult, home) {
+      userPortrait.innerHTML = '';
+      if (!hasSavedBirthProfile(home)) {
+        portraitStatus.textContent = '待补全';
+        userPortrait.innerHTML = '<div class="empty">补全出生资料后，这里会逐步整理你的关注点与沟通偏好。</div>';
+        return;
+      }
+
+      const portrait = (portraitResult && portraitResult.portrait) || buildFallbackPortrait(memorySummary || {});
+      const summary = compactText(portrait.summary, 92);
+      const points = (Array.isArray(portrait.points) ? portrait.points : [])
+        .map((item) => compactText(item, 42))
+        .filter(Boolean)
+        .slice(0, 3);
+
+      if (!summary && !points.length) {
+        portraitStatus.textContent = '暂无画像';
+        userPortrait.innerHTML = '<div class="empty">完成一次分析或追问后，这里会生成简短画像。</div>';
+        return;
+      }
+
+      portraitStatus.textContent = portraitResult && portraitResult.ai_used ? '已整理' : '自动整理';
+      userPortrait.innerHTML = `
+        <div class="portrait-headline">
+          <strong>${escapeHtml(compactText(portrait.headline, 18) || '偏好已沉淀')}</strong>
+          <span>${escapeHtml(formatDateTime(portrait.updated_at))}</span>
+        </div>
+        <p class="portrait-summary">${escapeHtml(summary || points[0])}</p>
+        ${points.length ? `<ul class="portrait-points">${points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')}</ul>` : ''}
+      `;
+    }
+
+    function renderRecentThread(memorySummary, home) {
+      recentThread.innerHTML = '';
+      if (!hasSavedBirthProfile(home)) {
+        threadStatus.textContent = '待补全';
+        recentThread.innerHTML = '<div class="empty">补全出生资料后，近期追问会按主题形成脉络。</div>';
+        return;
+      }
+
+      const items = buildRecentThreadItems(memorySummary || {});
+      threadStatus.textContent = items.length ? `${items.length} 个主题` : '暂无追问';
+      if (!items.length) {
+        recentThread.innerHTML = '<div class="empty">还没有追问片段。后续对话会在这里按主题串联。</div>';
+        return;
+      }
+
+      items.forEach((item) => {
+        const link = document.createElement('a');
+        link.className = 'thread-item';
+        link.href = '/memory';
+        link.innerHTML = `
+          <span class="thread-top">
+            <strong>${escapeHtml(item.theme)}</strong>
+            <span>${escapeHtml(item.count)} 次</span>
+          </span>
+          <p>${escapeHtml(item.summary || '这组追问暂无摘要，可进入记忆页查看完整内容。')}</p>
+          <small>${escapeHtml(formatDateTime(item.updated_at))}</small>
+        `;
+        recentThread.appendChild(link);
+      });
+    }
+
+    function renderQuickLinks(home, memorySummary) {
+      const analysisTotal = (home.analysis && home.analysis.total_count) || 0;
+      const chats = home.chats || {};
+      const memoryCount = getMemoryItems(memorySummary || {}).length;
+      const modules = [
+        { mark: '八', title: '八字分析', desc: '围绕命盘做经典、智慧和大师解读。', count: `${analysisTotal} 条记录`, href: '/analysis' },
+        { mark: '爻', title: '六爻问事', desc: '适合具体问题、短期判断和事件追问。', count: `${Number((chats.liuyao || {}).message_count || 0)} 条对话`, href: '/liuyao' },
+        { mark: '奇', title: '奇门遁甲', desc: '用于局势、选择和时机类问题。', count: `${Number((chats.qimen || {}).message_count || 0)} 条对话`, href: '/qimen' },
+        { mark: '记', title: '记忆整理', desc: '查看完整记忆沉淀与管理设置。', count: `${memoryCount} 条记忆`, href: '/memory' },
+      ];
+      quickLinks.innerHTML = modules.map((item) => `
+        <a class="module-card" href="${item.href}">
+          <span class="module-top">
+            <span class="module-mark">${escapeHtml(item.mark)}</span>
+            <span class="module-count">${escapeHtml(item.count)}</span>
+          </span>
+          <span>
+            <strong>${escapeHtml(item.title)}</strong>
+            <span>${escapeHtml(item.desc)}</span>
+          </span>
+        </a>
+      `).join('');
+    }
+
+    async function fetchJson(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false) throw new Error(data.error || `${url} 读取失败`);
+      return data;
+    }
+
+    function renderMemoryError(error, home, portraitResult) {
+      renderStats(home, {});
+      renderQuickLinks(home, {});
+      renderUserPortrait({}, portraitResult, home);
+      threadStatus.textContent = '读取失败';
+      recentThread.innerHTML = `<div class="empty">${escapeHtml(error.message || '记忆读取失败')}，近期追问暂时无法串联。</div>`;
+      memorySnapshotCount.textContent = '读取失败';
+      memorySnapshot.innerHTML = `<div class="empty">${escapeHtml(error.message || '记忆读取失败')}，核心入口仍可正常使用。</div>`;
+    }
+
+    async function loadHome() {
+      try {
+        const me = await fetchJson('/api/auth/me');
+        if (!me.authenticated) {
+          window.location.href = '/login';
+          return;
+        }
+        const accountLabel = me.account ? me.account.login_id : (me.username || me.user_id || '用户');
+        accountLine.textContent = `当前账号：${accountLabel}`;
+        welcomeTitle.textContent = `欢迎回来，${text(me.username || (me.account && me.account.display_name), '朋友')}`;
+
+        const portraitPromise = fetchJson('/api/memory/home-portrait')
+          .then((data) => ({ ok: true, data }))
+          .catch((error) => ({ ok: false, error }));
+        const [home, memoryResult] = await Promise.all([
+          fetchJson('/api/user/home'),
+          fetchJson('/api/memory/summary').then((data) => ({ ok: true, data })).catch((error) => ({ ok: false, error })),
+        ]);
+        await refreshBaziSummary(home);
+
+        welcomeText.textContent = home.profile_complete
+          ? '这里汇总你的出生档案、分析轨迹、术数入口和关键记忆。'
+          : '账号已登录，下一步需要补全出生资料。';
+
+        renderProfile(home);
+
+        if (!memoryResult.ok) {
+          renderMemoryError(memoryResult.error, home, null);
+          portraitPromise.then((portraitResult) => {
+            if (portraitResult.ok) renderUserPortrait({}, portraitResult.data, home);
+          });
+        } else {
+          renderStats(home, memoryResult.data);
+          renderQuickLinks(home, memoryResult.data);
+          renderUserPortrait(memoryResult.data, null, home);
+          renderRecentThread(memoryResult.data, home);
+          renderMemorySnapshot(memoryResult.data, home);
+          portraitPromise.then((portraitResult) => {
+            if (portraitResult.ok) renderUserPortrait(memoryResult.data, portraitResult.data, home);
+          });
+        }
+
+        statusLine.className = 'status';
+        statusLine.textContent = `最近同步：${formatDateTime(new Date().toISOString())}`;
+      } catch (error) {
+        statusLine.className = 'status error';
+        statusLine.textContent = error.message;
+      }
+    }
+
+    logoutBtn.addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' }).catch(() => null);
+      window.location.href = '/login';
+    });
+
+    loadHome();
+  </script>
+</body>
+</html>

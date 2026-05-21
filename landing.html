@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问真八字 | 命理分析与记忆整理</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-red: #D4392C;
+            --primary-gold: #B8860B;
+            --dark-gold: #8B6914;
+            --bg-primary: #FDFCF9;
+            --bg-secondary: #F8F5F0;
+            --text-primary: #2C2C2C;
+            --text-secondary: #5A5A5A;
+            --text-muted: #8A8A8A;
+            --border-light: #E8E4DD;
+            --shadow-elegant: 0 8px 32px rgba(212, 57, 44, 0.08);
+            --shadow-gold: 0 4px 16px rgba(184, 134, 11, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(212, 57, 44, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(184, 134, 11, 0.03) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(253, 252, 249, 0.8) 0%, rgba(248, 245, 240, 0.9) 100%);
+            z-index: -1;
+        }
+
+        /* 主容器 */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* 左侧内容区 */
+        .content-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 80px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Logo 和导航 */
+        .header {
+            position: absolute;
+            top: 40px;
+            left: 80px;
+            right: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-gold) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-red);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-gold) 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-gold);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 57, 44, 0.25);
+        }
+
+        /* 主标题区域 */
+        .hero-content {
+            margin-top: 60px;
+        }
+
+        .title-main {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-gold) 70%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-sub {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        /* 核心特色卡片 */
+        .features-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elegant);
+            border-color: rgba(212, 57, 44, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* 行动按钮组 */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .primary-action {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-gold) 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: var(--shadow-gold);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(212, 57, 44, 0.3);
+        }
+
+        .secondary-action {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 16px 24px;
+            border: 2px solid var(--border-light);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .secondary-action:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 右侧视觉区域 */
+        .visual-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 60px;
+            position: relative;
+            background: linear-gradient(135deg, rgba(248, 245, 240, 0.6) 0%, rgba(253, 252, 249, 0.8) 100%);
+        }
+
+        /* 八卦装饰 */
+        .bagua-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin-bottom: 40px;
+        }
+
+        .bagua-circle {
+            width: 100%;
+            height: 100%;
+            border: 3px solid var(--primary-gold);
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(248, 245, 240, 0.7) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-elegant);
+            animation: rotate 60s linear infinite;
+        }
+
+        .bagua-center {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-gold) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            box-shadow: 0 0 20px rgba(212, 57, 44, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .bagua-trigram {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(212, 57, 44, 0.1);
+            border: 2px solid var(--primary-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary-red);
+            font-weight: 600;
+        }
+
+        .trigram-1 { top: 20px; left: 50%; transform: translateX(-50%); }
+        .trigram-2 { top: 40px; right: 40px; }
+        .trigram-3 { right: 20px; top: 50%; transform: translateY(-50%); }
+        .trigram-4 { bottom: 40px; right: 40px; }
+        .trigram-5 { bottom: 20px; left: 50%; transform: translateX(-50%); }
+        .trigram-6 { bottom: 40px; left: 40px; }
+        .trigram-7 { left: 20px; top: 50%; transform: translateY(-50%); }
+        .trigram-8 { top: 40px; left: 40px; }
+
+        /* 技术标签 */
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            max-width: 400px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-light);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: rgba(212, 57, 44, 0.1);
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+        }
+
+        /* 动画 */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+            }
+            
+            .content-section {
+                padding: 40px 60px;
+            }
+            
+            .visual-section {
+                padding: 40px;
+                background: var(--bg-secondary);
+            }
+            
+            .bagua-container {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .bagua-center {
+                width: 100px;
+                height: 100px;
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-section {
+                padding: 30px 40px;
+            }
+            
+            .header {
+                left: 40px;
+                right: 40px;
+                top: 30px;
+            }
+            
+            .title-main {
+                font-size: 36px;
+            }
+            
+            .features-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="page-landing">
+    <div class="main-container">
+        <!-- 头部导航 -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">易</div>
+                <span>问真八字</span>
+            </div>
+            <nav class="nav-actions">
+                <a href="#about" class="nav-link">服务介绍</a>
+                <a href="#features" class="nav-link">分析内容</a>
+                <a href="/login" class="cta-button">进入分析</a>
+            </nav>
+        </header>
+
+        <!-- 左侧内容区 -->
+        <section class="content-section">
+            <div class="hero-content">
+                <h1 class="title-main">问真八字<br/>命理分析</h1>
+                <p class="title-sub">围绕命盘、追问和长期记忆<br/>整理可持续参考的个人分析脉络</p>
+                
+                <div class="features-showcase">
+                    <div class="feature-card">
+                        <span class="feature-icon">命</span>
+                        <div class="feature-title">10维度深度分析</div>
+                        <div class="feature-desc">从日元核心到人生运势的全方位专业解读</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">读</span>
+                        <div class="feature-title">多层次解读</div>
+                        <div class="feature-desc">从专业判断到通俗说明，适配不同阅读需求</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">问</span>
+                        <div class="feature-title">连续追问</div>
+                        <div class="feature-desc">围绕同一命盘延展问题，保留上下文脉络</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">记</span>
+                        <div class="feature-title">记忆整理</div>
+                        <div class="feature-desc">沉淀长期关注点，便于后续分析延续判断</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="/login" class="primary-action">
+                        <span>开始分析</span>
+                        <span>→</span>
+                    </a>
+                    <a href="/login" class="secondary-action">登录账号</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右侧视觉区 -->
+        <section class="visual-section">
+            <div class="bagua-container">
+                <div class="bagua-circle">
+                    <div class="bagua-center">☯</div>
+                    <div class="bagua-trigram trigram-1">乾</div>
+                    <div class="bagua-trigram trigram-2">兑</div>
+                    <div class="bagua-trigram trigram-3">离</div>
+                    <div class="bagua-trigram trigram-4">震</div>
+                    <div class="bagua-trigram trigram-5">巽</div>
+                    <div class="bagua-trigram trigram-6">坎</div>
+                    <div class="bagua-trigram trigram-7">艮</div>
+                    <div class="bagua-trigram trigram-8">坤</div>
+                </div>
+            </div>
+            
+            <div class="tech-badges">
+                <span class="tech-badge">八字排盘</span>
+                <span class="tech-badge">多维分析</span>
+                <span class="tech-badge">追问脉络</span>
+                <span class="tech-badge">记忆整理</span>
+                <span class="tech-badge">六爻</span>
+                <span class="tech-badge">奇门</span>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

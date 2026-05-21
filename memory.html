@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>记忆管理 | 八字命理分析</title>
+  <style>
+    :root {
+      --bg: #f7f5ef;
+      --surface: #ffffff;
+      --ink: #202124;
+      --muted: #66717c;
+      --line: #ddd6c8;
+      --primary: #146c63;
+      --primary-dark: #0f544e;
+      --soft: #f0ebe0;
+      --danger: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.86);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .bar {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .brand strong { font-size: 20px; }
+    .brand span { color: var(--muted); font-size: 13px; }
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    a, button.link {
+      color: var(--primary-dark);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    a:hover, button.link:hover { text-decoration: underline; }
+    button.link {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+      padding: 0;
+    }
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 28px auto 48px;
+      display: grid;
+      gap: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 12px 32px rgba(43, 36, 22, 0.06);
+    }
+    .span-4 { grid-column: span 4; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 4px; font-size: 28px; letter-spacing: 0; }
+    h2 { margin-bottom: 12px; font-size: 18px; letter-spacing: 0; }
+    h3 { margin-bottom: 8px; font-size: 15px; }
+    .muted { color: var(--muted); line-height: 1.65; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .stat {
+      border: 1px solid #eee5d7;
+      border-radius: 7px;
+      background: #fffdf8;
+      padding: 12px;
+    }
+    .stat span { color: var(--muted); font-size: 13px; }
+    .stat strong { display: block; margin-top: 6px; font-size: 22px; }
+    .switches {
+      display: grid;
+      gap: 12px;
+    }
+    label.switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid #eee8dd;
+      padding-bottom: 10px;
+      line-height: 1.5;
+    }
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      flex: 0 0 auto;
+    }
+    .memory-list {
+      display: grid;
+      gap: 10px;
+    }
+    .item {
+      border: 1px solid #eee5d7;
+      border-radius: 7px;
+      padding: 12px;
+      background: #fffdf8;
+    }
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .item-head small {
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .item-body {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      color: #394047;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border-radius: 7px;
+      border: 1px solid var(--primary);
+      padding: 7px 11px;
+      background: var(--primary);
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button.secondary {
+      background: #fffdf8;
+      color: var(--primary-dark);
+      border-color: #b8d1cc;
+    }
+    .button.danger {
+      background: white;
+      color: var(--danger);
+      border-color: #efb4ad;
+    }
+    .empty {
+      color: var(--muted);
+      background: var(--soft);
+      border: 1px dashed #d2c7b4;
+      border-radius: 7px;
+      padding: 14px;
+      line-height: 1.65;
+    }
+    .status {
+      min-height: 22px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .status.error { color: var(--danger); }
+    @media (max-width: 880px) {
+      .bar { align-items: flex-start; flex-direction: column; padding: 14px 0; }
+      .grid { grid-template-columns: 1fr; }
+      .span-4, .span-8, .span-12 { grid-column: span 1; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="page-memory">
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <strong>记忆管理</strong>
+        <span id="accountLine">正在读取账号...</span>
+      </div>
+      <nav>
+        <a href="/home">首页</a>
+        <a href="/birth-input">出生资料</a>
+        <a href="/analysis">分析页</a>
+        <a href="/liuyao">六爻</a>
+        <a href="/qimen">奇门</a>
+        <button class="link" id="logoutBtn" type="button">退出</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel span-12">
+      <h1>记忆管理</h1>
+      <p class="muted">管理长期关注、领域摘要和近期追问，让后续分析延续已有脉络。</p>
+      <div class="actions">
+        <button class="button" id="exportBtn" type="button">导出记忆文件</button>
+        <button class="button secondary" id="rebuildBtn" type="button">重新整理历史记忆</button>
+      </div>
+      <div class="status" id="statusLine"></div>
+    </section>
+
+    <section class="grid">
+      <article class="panel span-4">
+        <h2>记忆开关</h2>
+        <div class="switches">
+          <label class="switch">
+            <span>启用长期记忆</span>
+            <input id="memoryEnabled" type="checkbox" />
+          </label>
+          <label class="switch">
+            <span>启用情绪支持记忆</span>
+            <input id="emotionalEnabled" type="checkbox" />
+          </label>
+        </div>
+      </article>
+
+      <article class="panel span-8">
+        <h2>概览</h2>
+        <div class="stats" id="stats"></div>
+      </article>
+
+      <article class="panel span-12">
+        <h2>命盘事实</h2>
+        <div class="item-body" id="chartFacts"></div>
+      </article>
+
+      <article class="panel span-12">
+        <h2>沟通与情绪支持</h2>
+        <div class="memory-list" id="supportList"></div>
+      </article>
+
+      <article class="panel span-12">
+        <h2>领域摘要</h2>
+        <div class="memory-list" id="insightList"></div>
+      </article>
+
+      <article class="panel span-12">
+        <h2>最近对话片段</h2>
+        <div class="memory-list" id="episodeList"></div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const accountLine = document.getElementById('accountLine');
+    const statusLine = document.getElementById('statusLine');
+    const stats = document.getElementById('stats');
+    const chartFacts = document.getElementById('chartFacts');
+    const supportList = document.getElementById('supportList');
+    const insightList = document.getElementById('insightList');
+    const episodeList = document.getElementById('episodeList');
+    const memoryEnabled = document.getElementById('memoryEnabled');
+    const emotionalEnabled = document.getElementById('emotionalEnabled');
+    const exportBtn = document.getElementById('exportBtn');
+    const rebuildBtn = document.getElementById('rebuildBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+
+    function stat(label, value) {
+      const div = document.createElement('div');
+      div.className = 'stat';
+      div.innerHTML = `<span>${escapeHtml(label)}</span><strong>${Number(value || 0)}</strong>`;
+      return div;
+    }
+
+    function renderStats(data) {
+      const counts = data.counts || {};
+      stats.innerHTML = '';
+      stats.appendChild(stat('置顶', (data.categories?.pinned?.count) || 0));
+      stats.appendChild(stat('支持偏好', counts.support_profile || 0));
+      stats.appendChild(stat('领域摘要', counts.domain_insight || 0));
+      stats.appendChild(stat('对话片段', counts.episode || 0));
+    }
+
+    function renderList(container, items) {
+      container.innerHTML = '';
+      if (!items || !items.length) {
+        container.innerHTML = '<div class="empty">暂无记录</div>';
+        return;
+      }
+      items.forEach((item) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="item-head">
+            <span>${escapeHtml(item.dimension || item.domain || item.type || '记忆')}</span>
+            <small>${escapeHtml(item.pinned ? '已置顶' : (item.updated_at || '').slice(0, 19))}</small>
+          </div>
+          <div class="item-body">${escapeHtml(item.content)}</div>
+          <div class="actions">
+            <button class="button secondary" data-pin="${escapeHtml(item.id)}" data-pinned="${item.pinned ? 'true' : 'false'}">${item.pinned ? '取消置顶' : '置顶'}</button>
+            <button class="button danger" data-delete="${escapeHtml(item.id)}">删除</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function savePreferences() {
+      const body = {
+        memory_enabled: memoryEnabled.checked,
+        emotional_memory_enabled: emotionalEnabled.checked,
+      };
+      const res = await fetch('/api/memory/preferences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok || data.success === false) throw new Error(data.error || '保存失败');
+      await loadMemory();
+    }
+
+    async function pinItem(id, pinned) {
+      const res = await fetch(`/api/memory/items/${encodeURIComponent(id)}/pin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pinned }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.success === false) throw new Error(data.error || '操作失败');
+      await loadMemory();
+    }
+
+    async function deleteItem(id) {
+      const res = await fetch(`/api/memory/items/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok || data.success === false) throw new Error(data.error || '删除失败');
+      await loadMemory();
+    }
+
+    async function rebuildMemory() {
+      statusLine.className = 'status';
+      statusLine.textContent = '正在整理历史记忆...';
+      rebuildBtn.disabled = true;
+      try {
+        const res = await fetch('/api/memory/rebuild', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok || data.success === false) throw new Error(data.error || '整理失败');
+        const count = data.backfill?.backfilled ?? 0;
+        statusLine.textContent = `历史记忆已整理：${count} 条`;
+        await loadMemory();
+      } finally {
+        rebuildBtn.disabled = false;
+      }
+    }
+
+    function filenameFromDisposition(disposition) {
+      if (!disposition) return '命理记忆.md';
+      const encoded = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+      if (encoded?.[1]) {
+        try {
+          return decodeURIComponent(encoded[1]);
+        } catch (error) {
+          return encoded[1];
+        }
+      }
+      const plain = disposition.match(/filename="?([^"]+)"?/i);
+      return plain?.[1] || '命理记忆.md';
+    }
+
+    async function exportMemory() {
+      statusLine.className = 'status';
+      statusLine.textContent = '正在生成记忆文件...';
+      exportBtn.disabled = true;
+      try {
+        const res = await fetch('/api/memory/export');
+        if (!res.ok) {
+          let message = '导出失败';
+          try {
+            const data = await res.clone().json();
+            message = data.error || message;
+          } catch (error) {
+            const text = await res.text().catch(() => '');
+            message = text || message;
+          }
+          throw new Error(message);
+        }
+        const blob = await res.blob();
+        const filename = filenameFromDisposition(res.headers.get('Content-Disposition'));
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        statusLine.textContent = '记忆文件已生成';
+      } catch (error) {
+        statusLine.className = 'status error';
+        statusLine.textContent = error.message || '导出失败';
+      } finally {
+        exportBtn.disabled = false;
+      }
+    }
+
+    async function loadMemory() {
+      try {
+        statusLine.className = 'status';
+        statusLine.textContent = '正在读取记忆...';
+        const meRes = await fetch('/api/auth/me');
+        const me = await meRes.json();
+        if (!me.authenticated) {
+          window.location.href = '/login';
+          return;
+        }
+        accountLine.textContent = `当前账号：${me.account ? me.account.login_id : (me.username || me.user_id)}`;
+
+        const res = await fetch('/api/memory/summary');
+        const data = await res.json();
+        if (!res.ok || data.success === false) throw new Error(data.error || '记忆读取失败');
+        const prefs = data.preferences || {};
+        memoryEnabled.checked = prefs.memory_enabled !== false;
+        emotionalEnabled.checked = prefs.emotional_memory_enabled !== false;
+        renderStats(data);
+        chartFacts.textContent = data.chart_facts?.summary || '暂无命盘事实';
+        renderList(supportList, data.categories?.support_profile?.items || []);
+        renderList(insightList, data.categories?.domain_insight?.items || []);
+        renderList(episodeList, data.categories?.episode?.items || []);
+        statusLine.textContent = '已同步最新记忆';
+      } catch (error) {
+        statusLine.className = 'status error';
+        statusLine.textContent = error.message;
+      }
+    }
+
+    document.addEventListener('click', async (event) => {
+      const pinId = event.target?.dataset?.pin;
+      const deleteId = event.target?.dataset?.delete;
+      if (!pinId && !deleteId) return;
+      try {
+        if (pinId) {
+          await pinItem(pinId, event.target.dataset.pinned !== 'true');
+        }
+        if (deleteId) await deleteItem(deleteId);
+      } catch (error) {
+        statusLine.className = 'status error';
+        statusLine.textContent = error.message;
+      }
+    });
+
+    memoryEnabled.addEventListener('change', savePreferences);
+    emotionalEnabled.addEventListener('change', savePreferences);
+    exportBtn.addEventListener('click', exportMemory);
+    rebuildBtn.addEventListener('click', rebuildMemory);
+    logoutBtn.addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' }).catch(() => null);
+      window.location.href = '/login';
+    });
+
+    loadMemory();
+  </script>
+</body>
+</html>

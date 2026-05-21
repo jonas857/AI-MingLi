@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 | 八字命理分析</title>
+  <style>
+    :root {
+      --bg: #f7f5ef;
+      --surface: #ffffff;
+      --surface-soft: #fbf8f1;
+      --ink: #202124;
+      --muted: #66717c;
+      --line: #ddd6c8;
+      --primary: #146c63;
+      --primary-dark: #0f544e;
+      --accent: #a45f21;
+      --accent-soft: #f2dfbf;
+      --danger: #b42318;
+      --ok: #087443;
+      --shadow: 0 22px 60px rgba(43, 36, 22, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(20, 108, 99, 0.08), transparent 32%),
+        linear-gradient(315deg, rgba(164, 95, 33, 0.12), transparent 34%),
+        var(--bg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.45;
+      background-image:
+        linear-gradient(rgba(20, 108, 99, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 108, 99, 0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(120deg, black, transparent 72%);
+    }
+
+    a {
+      color: var(--primary-dark);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      min-height: 100dvh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 22px;
+      padding: 26px 0 34px;
+      position: relative;
+    }
+
+    .topbar {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 10px 26px rgba(20, 108, 99, 0.22);
+      font-weight: 900;
+      letter-spacing: 0;
+      flex: 0 0 auto;
+    }
+
+    .brand-copy {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .top-link {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--primary-dark);
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+    }
+
+    .shell {
+      align-self: center;
+      display: grid;
+      grid-template-columns: minmax(0, 0.96fr) minmax(380px, 1fr);
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .intro {
+      min-height: 560px;
+      border: 1px solid rgba(221, 214, 200, 0.9);
+      border-radius: 8px;
+      padding: clamp(24px, 4vw, 44px);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.74), rgba(251,248,241,0.88)),
+        repeating-linear-gradient(135deg, rgba(164, 95, 33, 0.08) 0 1px, transparent 1px 18px);
+      box-shadow: var(--shadow);
+      display: grid;
+      align-content: space-between;
+      gap: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .intro::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -120px;
+      width: 320px;
+      height: 320px;
+      border: 1px solid rgba(164, 95, 33, 0.28);
+      transform: rotate(45deg);
+    }
+
+    .intro-main,
+    .intro-foot {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      margin-bottom: 18px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(20, 108, 99, 0.09);
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 10em;
+      font-size: clamp(34px, 5.5vw, 62px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .intro-text {
+      margin: 18px 0 0;
+      max-width: 560px;
+      color: #4f5a61;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .signal-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+      max-width: 560px;
+    }
+
+    .signal {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      color: #3e454d;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .signal::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(164, 95, 33, 0.12);
+    }
+
+    .intro-foot {
+      display: grid;
+      gap: 12px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(221, 214, 200, 0.86);
+    }
+
+    .foot-title {
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .foot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .foot-item {
+      min-height: 72px;
+      padding: 12px;
+      border: 1px solid rgba(221, 214, 200, 0.9);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.58);
+      display: grid;
+      gap: 4px;
+    }
+
+    .foot-item strong {
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .foot-item span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .panel-head {
+      padding: 24px 24px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fffdf8, #ffffff);
+    }
+
+    .panel-title {
+      margin: 0 0 7px;
+      font-size: 22px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .panel-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f3efe5;
+      margin-bottom: 22px;
+    }
+
+    .tab {
+      min-height: 42px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 800;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .tab:hover {
+      color: var(--primary-dark);
+    }
+
+    .tab:active {
+      transform: scale(0.98);
+    }
+
+    .tab.active {
+      background: var(--surface);
+      color: var(--primary-dark);
+      box-shadow: 0 1px 5px rgba(43, 36, 22, 0.08);
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form-title {
+      margin: 0 0 2px;
+      font-size: 20px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .form-copy {
+      margin: -6px 0 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: #4c5158;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid #cfc8ba;
+      border-radius: 7px;
+      padding: 11px 12px;
+      color: var(--ink);
+      background: #fffdf8;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    input:hover,
+    select:hover {
+      border-color: #bdb29f;
+      background: #ffffff;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(20, 108, 99, 0.13);
+      background: #ffffff;
+    }
+
+    .optional-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .date-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .date-label {
+      color: #4c5158;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .date-picker {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr 0.9fr;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid #d9d0bf;
+      border-radius: 8px;
+      background: #fffaf0;
+    }
+
+    .date-picker select {
+      min-height: 42px;
+      border-color: transparent;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .date-picker select:focus {
+      border-color: var(--primary);
+    }
+
+    .date-note {
+      min-height: 20px;
+      color: #6f7782;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .date-note.strong {
+      color: #76511c;
+      font-weight: 800;
+    }
+
+    button.primary {
+      min-height: 46px;
+      border: 0;
+      border-radius: 7px;
+      background: var(--primary);
+      color: white;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 900;
+      margin-top: 2px;
+      box-shadow: 0 12px 24px rgba(20, 108, 99, 0.18);
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button.primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 16px 30px rgba(20, 108, 99, 0.22);
+    }
+
+    button.primary:active {
+      transform: scale(0.98);
+    }
+
+    button.primary:disabled {
+      cursor: wait;
+      opacity: 0.72;
+      box-shadow: none;
+    }
+
+    .status {
+      min-height: 24px;
+      padding-top: 2px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .status.error { color: var(--danger); }
+    .status.ok { color: var(--ok); }
+
+    .hidden { display: none; }
+
+    .small {
+      margin: 2px 0 0;
+      padding: 12px;
+      border-left: 3px solid var(--accent);
+      background: #fff8eb;
+      color: #674318;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 980px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .intro {
+        min-height: auto;
+      }
+
+      h1 {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 24px, 1120px);
+        padding: 16px 0 24px;
+        gap: 14px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .top-link {
+        flex: 1;
+      }
+
+      .intro,
+      .panel-head,
+      .panel-body {
+        padding: 18px;
+      }
+
+      .intro {
+        gap: 22px;
+      }
+
+      .intro-text {
+        font-size: 15px;
+      }
+
+      .foot-grid,
+      .optional-grid,
+      .date-picker {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-subtitle {
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand-title {
+        font-size: 16px;
+      }
+
+      .tabs {
+        margin-bottom: 18px;
+      }
+
+      .panel-title {
+        font-size: 20px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="page-login">
+  <div class="page">
+    <header class="topbar">
+      <div class="brand" aria-label="八字命理分析">
+        <div class="brand-mark">命</div>
+        <div class="brand-copy">
+          <div class="brand-title">八字命理分析</div>
+          <div class="brand-subtitle">命盘、分析、记忆与对话</div>
+        </div>
+      </div>
+      <nav class="top-actions" aria-label="快捷入口">
+        <a class="top-link" href="/">首页</a>
+        <a class="top-link" href="/home">用户主页</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="intro">
+        <div class="intro-main">
+          <div class="eyebrow">账号登录</div>
+          <h1>进入你的命理分析空间</h1>
+          <p class="intro-text">登录后可继续查看命盘、分析记录和记忆整理，让后续追问衔接已有结论。</p>
+
+          <div class="signal-list" aria-label="登录后可使用的内容">
+            <div class="signal">查看出生资料、命盘状态和完整分析记录。</div>
+            <div class="signal">继续追问八字、六爻与奇门相关问题。</div>
+            <div class="signal">在用户主页查看长期关注和近期脉络。</div>
+          </div>
+        </div>
+
+        <div class="intro-foot">
+          <div class="foot-title">登录后可进入</div>
+          <div class="foot-grid">
+            <div class="foot-item">
+              <strong>用户主页</strong>
+              <span>资料与记忆总览</span>
+            </div>
+            <div class="foot-item">
+              <strong>八字分析</strong>
+              <span>多维度深度解读</span>
+            </div>
+            <div class="foot-item">
+              <strong>术数工具</strong>
+              <span>六爻与奇门对话</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="登录与注册">
+        <div class="panel-head">
+          <h2 class="panel-title">进入你的分析工作台</h2>
+          <p class="panel-subtitle">登录后继续查看命盘、分析记录与记忆整理。</p>
+        </div>
+
+        <div class="panel-body">
+          <div class="tabs" role="tablist" aria-label="账号操作">
+            <button class="tab active" id="loginTab" type="button" role="tab" aria-selected="true" aria-controls="loginForm">登录</button>
+            <button class="tab" id="registerTab" type="button" role="tab" aria-selected="false" aria-controls="registerForm">注册</button>
+          </div>
+
+          <form id="loginForm">
+            <h2 class="form-title">进入已有账号</h2>
+            <p class="form-copy">继续查看你的命盘、记忆整理和历史分析。</p>
+            <label>
+              手机号或昵称
+              <input name="login_id" autocomplete="username" required />
+            </label>
+            <label>
+              PIN
+              <input name="pin" type="password" autocomplete="current-password" required minlength="4" />
+            </label>
+            <button class="primary" type="submit">进入首页</button>
+            <div class="status" id="loginStatus" aria-live="polite"></div>
+          </form>
+
+          <form id="registerForm" class="hidden">
+            <h2 class="form-title">创建账号</h2>
+            <p class="form-copy">补全出生资料后，系统会生成命盘并准备进入分析页。</p>
+            <label>
+              手机号或昵称
+              <input name="login_id" autocomplete="username" required />
+            </label>
+            <label>
+              显示昵称
+              <input name="display_name" autocomplete="name" required />
+            </label>
+            <label>
+              PIN
+              <input name="pin" type="password" autocomplete="new-password" required minlength="4" />
+            </label>
+            <div class="optional-grid">
+              <div class="date-field">
+                <div class="date-label">出生日期</div>
+                <div class="date-picker" aria-label="出生日期">
+                  <select id="birthYear" required aria-label="出生年份"></select>
+                  <select id="birthMonth" required aria-label="出生月份"></select>
+                  <select id="birthDay" required aria-label="出生日期"></select>
+                </div>
+                <input id="birthDateValue" name="birth_date" type="hidden" />
+                <input id="lunarLeapValue" name="lunar_is_leap_month" type="hidden" />
+                <div class="date-note" id="dateHint" aria-live="polite"></div>
+              </div>
+              <label>
+                性别
+                <select name="gender" required>
+                  <option value="">请选择</option>
+                  <option value="1">男</option>
+                  <option value="0">女</option>
+                </select>
+              </label>
+              <label>
+                出生时间
+                <input name="birth_time" type="time" required />
+              </label>
+              <label>
+                历法
+                <select name="calendar_type" required>
+                  <option value="solar">阳历</option>
+                  <option value="lunar">农历</option>
+                </select>
+              </label>
+            </div>
+            <button class="primary" type="submit">注册并进入分析页</button>
+            <p class="small">出生资料将用于生成命盘，请尽量填写准确。</p>
+            <div class="status" id="registerStatus" aria-live="polite"></div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginStatus = document.getElementById('loginStatus');
+    const registerStatus = document.getElementById('registerStatus');
+    const birthYear = document.getElementById('birthYear');
+    const birthMonth = document.getElementById('birthMonth');
+    const birthDay = document.getElementById('birthDay');
+    const birthDateValue = document.getElementById('birthDateValue');
+    const lunarLeapValue = document.getElementById('lunarLeapValue');
+    const calendarType = registerForm.querySelector('select[name="calendar_type"]');
+    const dateHint = document.getElementById('dateHint');
+
+    const LUNAR_INFO = [
+      0x04bd8,
+      0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950,
+      0x16554, 0x056a0, 0x09ad0, 0x055d2, 0x04ae0,
+      0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255, 0x0b540,
+      0x0d6a0, 0x0ada2, 0x095b0, 0x14977, 0x04970,
+      0x0a4b0, 0x0b4b5, 0x06a50, 0x06d40, 0x1ab54,
+      0x02b60, 0x09570, 0x052f2, 0x04970, 0x06566,
+      0x0d4a0, 0x0ea50, 0x06e95, 0x05ad0, 0x02b60,
+      0x186e3, 0x092e0, 0x1c8d7, 0x0c950, 0x0d4a0,
+      0x1d8a6, 0x0b550, 0x056a0, 0x1a5b4, 0x025d0,
+      0x092d0, 0x0d2b2, 0x0a950, 0x0b557, 0x06ca0,
+      0x0b550, 0x15355, 0x04da0, 0x0a5d0, 0x14573,
+      0x052b0, 0x0a9a8, 0x0e950, 0x06aa0, 0x0aea6,
+      0x0ab50, 0x04b60, 0x0aae4, 0x0a570, 0x05260,
+      0x0f263, 0x0d950, 0x05b57, 0x056a0, 0x096d0,
+      0x04dd5, 0x04ad0, 0x0a4d0, 0x0d4d4, 0x0d250,
+      0x0d558, 0x0b540, 0x0b5a0, 0x195a6, 0x095b0,
+      0x049b0, 0x0a974, 0x0a4b0, 0x0b27a, 0x06a50,
+      0x06d40, 0x0af46, 0x0ab60, 0x09570, 0x04af5,
+      0x04970, 0x064b0, 0x074a3, 0x0ea50, 0x06b58,
+      0x05ac0, 0x0ab60, 0x096d5, 0x092e0, 0x0c960,
+      0x0d954, 0x0d4a0, 0x0da50, 0x07552, 0x056a0,
+      0x0abb7, 0x025d0, 0x092d0, 0x0cab5, 0x0a950,
+      0x0b4a0, 0x0baa4, 0x0ad50, 0x055d9, 0x04ba0,
+      0x0a5b0, 0x15176, 0x052b0, 0x0a930, 0x07954,
+      0x06aa0, 0x0ad50, 0x05b52, 0x04b60, 0x0a6e6,
+      0x0a4e0, 0x0d260, 0x0ea65, 0x0d530, 0x05aa0,
+      0x076a3, 0x096d0, 0x04afb, 0x04ad0, 0x0a4d0,
+      0x1d0b6, 0x0d250, 0x0d520, 0x0dd45, 0x0b5a0,
+      0x056d0, 0x055b2, 0x049b0, 0x0a577, 0x0a4b0,
+      0x0aa50, 0x1b255, 0x06d20, 0x0ada0, 0x14b63,
+      0x09370, 0x049f8, 0x04970, 0x064b0, 0x168a6,
+      0x0ea50, 0x06aa0, 0x1a6c4, 0x0aae0, 0x092e0,
+      0x0d2e3, 0x0c960, 0x0d557, 0x0d4a0, 0x0da50,
+      0x05d55, 0x056a0, 0x0a6d0, 0x055d4, 0x052d0,
+      0x0a9b8, 0x0a950, 0x0b4a0, 0x0b6a6, 0x0ad50,
+      0x055a0, 0x0aba4, 0x0a5b0, 0x052b0, 0x0b273,
+      0x06930, 0x07337, 0x06aa0, 0x0ad50, 0x14b55,
+      0x04b60, 0x0a570, 0x054e4, 0x0d160, 0x0e968,
+      0x0d520, 0x0daa0, 0x16aa6, 0x056d0, 0x04ae0,
+      0x0a9d4, 0x0a2d0, 0x0d150, 0x0f252,
+    ];
+
+    const LUNAR_MONTH_NAMES = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
+
+    function pad2(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function addOption(select, value, text, disabled = false) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      option.disabled = disabled;
+      option.selected = disabled;
+      option.hidden = disabled;
+      select.appendChild(option);
+    }
+
+    function isLunarCalendar() {
+      return calendarType.value === 'lunar';
+    }
+
+    function getLunarYearInfo(year) {
+      const index = Number(year) - 1900;
+      if (index < 0 || index >= LUNAR_INFO.length) return null;
+      const info = LUNAR_INFO[index];
+      const leapMonth = info & 0xf;
+      return {
+        info,
+        leapMonth,
+        leapDays: leapMonth ? ((info & 0x10000) ? 30 : 29) : 0,
+      };
+    }
+
+    function getLunarMonthDays(year, month, isLeapMonth = false) {
+      const lunarInfo = getLunarYearInfo(year);
+      if (!lunarInfo) return 30;
+      if (isLeapMonth) return lunarInfo.leapDays || 0;
+      return (lunarInfo.info & (0x10000 >> Number(month))) ? 30 : 29;
+    }
+
+    function getSelectedMonth() {
+      const raw = birthMonth.value || '';
+      const isLeapMonth = raw.startsWith('L');
+      return {
+        raw,
+        month: Number(raw.replace('L', '')),
+        isLeapMonth,
+      };
+    }
+
+    function lunarMonthLabel(month) {
+      return LUNAR_MONTH_NAMES[Number(month) - 1] || `${month} 月`;
+    }
+
+    function updateDateHint() {
+      const year = Number(birthYear.value);
+      const selected = getSelectedMonth();
+      dateHint.classList.remove('strong');
+      if (!isLunarCalendar()) {
+        dateHint.textContent = '阳历按公历月份自动处理 28 至 31 天。';
+        return;
+      }
+      if (!year) {
+        dateHint.textContent = '农历会按所选年份自动限制大小月，并在有闰月时显示闰月选项。';
+        return;
+      }
+      const lunarInfo = getLunarYearInfo(year);
+      if (!lunarInfo) {
+        dateHint.textContent = '该年份超出农历校验范围，将交由后端最终校验。';
+        return;
+      }
+      if (selected.isLeapMonth) {
+        dateHint.classList.add('strong');
+        dateHint.textContent = `已选择农历闰${lunarMonthLabel(selected.month)}，系统会按闰月生成命盘。`;
+        return;
+      }
+      if (lunarInfo.leapMonth) {
+        dateHint.textContent = `${year} 年有闰${lunarMonthLabel(lunarInfo.leapMonth)}，可在月份下拉中直接选择。`;
+      } else {
+        dateHint.textContent = `${year} 年无闰月，农历月份已按大小月限制日期。`;
+      }
+    }
+
+    function populateBirthMonths() {
+      const selectedValue = birthMonth.value;
+      const year = Number(birthYear.value);
+      birthMonth.innerHTML = '';
+      addOption(birthMonth, '', '选择月份', true);
+
+      if (isLunarCalendar()) {
+        const lunarInfo = getLunarYearInfo(year);
+        for (let month = 1; month <= 12; month += 1) {
+          const value = pad2(month);
+          addOption(birthMonth, value, lunarMonthLabel(month));
+          if (lunarInfo?.leapMonth === month) {
+            addOption(birthMonth, `L${value}`, `闰${lunarMonthLabel(month)}`);
+          }
+        }
+      } else {
+        for (let month = 1; month <= 12; month += 1) {
+          addOption(birthMonth, pad2(month), `${month} 月`);
+        }
+      }
+
+      if ([...birthMonth.options].some((option) => option.value === selectedValue)) {
+        birthMonth.value = selectedValue;
+      }
+      populateBirthDays();
+    }
+
+    function populateBirthDateSelectors() {
+      const currentYear = new Date().getFullYear();
+
+      birthYear.innerHTML = '';
+      birthMonth.innerHTML = '';
+      birthDay.innerHTML = '';
+
+      addOption(birthYear, '', '选择年份', true);
+      for (let year = currentYear; year >= 1900; year -= 1) {
+        addOption(birthYear, String(year), `${year} 年`);
+      }
+
+      populateBirthMonths();
+    }
+
+    function populateBirthDays() {
+      const selectedDay = birthDay.value;
+      const year = Number(birthYear.value || new Date().getFullYear());
+      const selectedMonth = getSelectedMonth();
+      const month = selectedMonth.month || 1;
+      const daysInMonth = isLunarCalendar()
+        ? getLunarMonthDays(year, month, selectedMonth.isLeapMonth)
+        : new Date(year, month, 0).getDate();
+
+      birthDay.innerHTML = '';
+      addOption(birthDay, '', '选择日期', true);
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        addOption(birthDay, pad2(day), `${day} 日`);
+      }
+
+      if (selectedDay && Number(selectedDay) <= daysInMonth) {
+        birthDay.value = selectedDay;
+      }
+
+      updateBirthDateValue();
+      updateDateHint();
+    }
+
+    function updateBirthDateValue() {
+      const selectedMonth = getSelectedMonth();
+      if (birthYear.value && selectedMonth.month && birthDay.value) {
+        birthDateValue.value = `${birthYear.value}-${pad2(selectedMonth.month)}-${birthDay.value}`;
+      } else {
+        birthDateValue.value = '';
+      }
+      lunarLeapValue.value = isLunarCalendar() && selectedMonth.isLeapMonth ? '1' : '';
+      return birthDateValue.value;
+    }
+
+    function setMode(mode) {
+      const isLogin = mode === 'login';
+      loginTab.classList.toggle('active', isLogin);
+      registerTab.classList.toggle('active', !isLogin);
+      loginTab.setAttribute('aria-selected', String(isLogin));
+      registerTab.setAttribute('aria-selected', String(!isLogin));
+      loginForm.classList.toggle('hidden', !isLogin);
+      registerForm.classList.toggle('hidden', isLogin);
+      loginStatus.textContent = '';
+      registerStatus.textContent = '';
+    }
+
+    function formPayload(form) {
+      updateBirthDateValue();
+      const data = {};
+      new FormData(form).forEach((value, key) => {
+        const clean = String(value || '').trim();
+        if (clean) data[key] = clean;
+      });
+      if (data.display_name && !data.name) data.name = data.display_name;
+      return data;
+    }
+
+    async function submitJson(url, payload) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.success === false) {
+        throw new Error(json.error || `请求失败：${res.status}`);
+      }
+      return json;
+    }
+
+    loginTab.addEventListener('click', () => setMode('login'));
+    registerTab.addEventListener('click', () => setMode('register'));
+    calendarType.addEventListener('change', populateBirthMonths);
+    birthYear.addEventListener('change', populateBirthMonths);
+    birthMonth.addEventListener('change', populateBirthDays);
+    birthDay.addEventListener('change', updateBirthDateValue);
+    populateBirthDateSelectors();
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const button = loginForm.querySelector('button[type="submit"]');
+      button.disabled = true;
+      loginStatus.className = 'status';
+      loginStatus.textContent = '正在登录...';
+      try {
+        await submitJson('/api/auth/login', formPayload(loginForm));
+        loginStatus.className = 'status ok';
+        loginStatus.textContent = '登录成功，正在进入首页...';
+        window.location.href = '/home';
+      } catch (error) {
+        loginStatus.className = 'status error';
+        loginStatus.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    registerForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!updateBirthDateValue()) {
+        registerStatus.className = 'status error';
+        registerStatus.textContent = '请选择完整的出生日期';
+        return;
+      }
+      const button = registerForm.querySelector('button[type="submit"]');
+      button.disabled = true;
+      registerStatus.className = 'status';
+      registerStatus.textContent = '正在创建账号...';
+      try {
+        const result = await submitJson('/api/auth/register', formPayload(registerForm));
+        registerStatus.className = 'status ok';
+        registerStatus.textContent = result.profile_complete ? '账号和出生资料已保存，正在进入分析页...' : (result.auto_bound ? '已匹配历史资料，正在进入首页...' : '账号已创建，正在进入首页...');
+        window.location.href = result.redirect_url || (result.profile_complete ? '/analysis' : '/home');
+      } catch (error) {
+        registerStatus.className = 'status error';
+        registerStatus.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
