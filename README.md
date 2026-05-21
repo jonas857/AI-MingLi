@@ -1,21 +1,21 @@
-# AI MingLi
+# AI 命理
 
-AI MingLi is an AI-assisted Chinese metaphysics product for self-understanding. It combines local BaZi chart calculation, Ziwei chart generation, prompt engineering, multi-model interpretation, and a layered long-term memory system.
+AI 命理是一个面向自我理解的 AI 命理产品。项目结合了本地八字排盘、紫微斗数排盘、提示词工程、多模型命理解读，以及分层长期记忆系统。
 
-The product goal is not only to produce a one-off fortune reading, but to help users build a clearer personal narrative through structured chart facts, repeated analysis, and gradually refined memory.
+它的目标不只是生成一次性的命理报告，而是通过结构化命盘事实、多维度分析和逐步沉淀的长期记忆，帮助用户建立更清晰的自我叙事。
 
-## Core Product Loop
+## 核心产品链路
 
-The main user journey is:
+主要用户路径如下：
 
-1. User enters personal birth information.
-2. The system calculates BaZi chart facts locally when possible.
-3. The user selects one or more analysis dimensions.
-4. Prompt templates combine chart facts, user background, dimension instructions, and shared memory.
-5. DeepSeek or Gemini generates the interpretation.
-6. The full analysis is returned immediately.
-7. A separate memory organizer later extracts durable profile, insight, and memory items.
-8. Future prompts dynamically inject the latest memory context.
+1. 用户输入个人出生信息。
+2. 系统优先在本地计算八字命盘事实。
+3. 用户选择一个或多个分析维度。
+4. 提示词模板组合命盘事实、用户背景、维度要求和共享记忆。
+5. DeepSeek 或 Gemini 生成命理解读。
+6. 完整分析结果立即返回给用户。
+7. 独立的记忆整理器随后提炼长期用户画像、维度洞察和记忆条目。
+8. 后续分析时，系统动态注入最新的记忆上下文。
 
 ```mermaid
 flowchart TD
@@ -30,9 +30,9 @@ flowchart TD
   I --> J["下一次构建提示词时动态注入"]
 ```
 
-## BaZi Calculation Flow
+## 八字排盘计算流程
 
-BaZi calculation is designed as a local-first pipeline. The backend normalizes user input and prefers the local Node bridge. If local calculation fails and the provider mode allows fallback, it calls the MCP-based provider.
+八字计算采用“本地优先”的链路设计。后端先标准化用户输入，然后优先通过本地 Node 桥接脚本调用排盘能力；如果本地计算失败，且配置允许回退，则调用 MCP 服务链路。
 
 ```mermaid
 flowchart TD
@@ -55,18 +55,18 @@ flowchart TD
   O --> P["后续提示词注入和 PDF 导出复用"]
 ```
 
-Key files:
+关键文件：
 
-- `birth_input.html`: collects and formats birth information.
-- `app_simplified.py`: exposes `POST /api/bazi/get`, validates input, chooses provider, saves user chart data.
-- `local_bazi_calculator.py`: Python wrapper around the local Node process.
-- `bazi_local_node.mjs`: local Node bridge using `bazi-mcp` and `tyme4ts`.
-- `bazi_client.py`: MCP fallback client.
-- `memory_manager.py`: extracts stable `chart_facts` from BaZi payloads.
+- `birth_input.html`：收集并格式化用户出生信息。
+- `app_simplified.py`：提供 `POST /api/bazi/get`，负责参数校验、计算链路选择和命盘数据保存。
+- `local_bazi_calculator.py`：Python 侧本地 Node 进程包装器。
+- `bazi_local_node.mjs`：本地 Node 桥接脚本，使用 `bazi-mcp` 和 `tyme4ts`。
+- `bazi_client.py`：MCP 回退客户端。
+- `memory_manager.py`：从八字结果中提取稳定的 `chart_facts`。
 
-## Ziwei Calculation Flow
+## 紫微排盘计算流程
 
-Ziwei is implemented as a separate MCP-backed chart service. It is gated by `ENABLE_MCP_ZIWEI`, then used by the Ziwei page and chat workflow.
+紫微斗数使用独立的 MCP 排盘服务实现，由 `ENABLE_MCP_ZIWEI` 控制开关，并服务于紫微排盘页面和紫微问答链路。
 
 ```mermaid
 flowchart TD
@@ -91,16 +91,16 @@ flowchart TD
   R --> S["异步整理器沉淀为跨领域记忆"]
 ```
 
-Key files:
+关键文件：
 
-- `ziwei_client.py`: wraps `ziwei-mcp` tool calls, including `generate_chart` and `interpret_chart`.
-- `app_simplified.py`: exposes `POST /api/ziwei/chart` and Ziwei chat APIs.
-- `analysis-detail.html`: contains Ziwei frontend interactions.
-- `memory_manager.py`: Ziwei chat events can be organized into shared memory with domain awareness.
+- `ziwei_client.py`：封装 `ziwei-mcp` 工具调用，包括 `generate_chart` 和 `interpret_chart`。
+- `app_simplified.py`：提供 `POST /api/ziwei/chart` 和紫微问答接口。
+- `analysis-detail.html`：包含紫微前端交互。
+- `memory_manager.py`：支持将紫微问答事件整理成带领域识别的共享记忆。
 
-## Prompt and Interpretation Flow
+## 提示词与解读流程
 
-Prompt construction is centralized in `prompt_templates.py`.
+提示词构建集中在 `prompt_templates.py` 中。
 
 ```mermaid
 flowchart TD
@@ -113,7 +113,7 @@ flowchart TD
   G --> H["返回专业版、智慧版或大师版解读"]
 ```
 
-Supported BaZi dimensions include:
+当前支持的八字分析维度包括：
 
 - 日元核心分析
 - 天干十神分析
@@ -126,37 +126,37 @@ Supported BaZi dimensions include:
 - 大运流年分析
 - 综合建议
 
-## Memory System
+## 记忆系统
 
-The memory system is a layered local-first design. It avoids putting all history into the prompt and instead injects a bounded, filtered context.
+记忆系统采用本地优先的分层设计。它不会把所有历史记录无差别塞进提示词，而是根据任务、维度、用户偏好和上下文预算，动态注入经过筛选的记忆。
 
-Main memory layers:
+主要记忆层包括：
 
-- `chart_facts`: stable chart facts extracted from BaZi payloads.
-- `profile`: user background, preferences, tags, and feedback.
-- `insights`: durable conclusions by analysis dimension and version.
-- `memory_items`: manageable memory records such as domain insights, support profile items, and episodes.
-- `events`: raw event queue consumed by the async organizer.
-- optional vector memory: semantic supplement when `ENABLE_VECTOR_MEMORY=true`.
+- `chart_facts`：从八字排盘结果中提取的稳定命盘事实。
+- `profile`：用户背景、偏好、标签和反馈。
+- `insights`：按分析维度和版本沉淀的长期结论。
+- `memory_items`：可管理的记忆条目，包括领域洞察、支持型画像和片段事件。
+- `events`：异步整理器消费的原始事件队列。
+- 可选向量记忆：当 `ENABLE_VECTOR_MEMORY=true` 时，用于补充语义检索。
 
-The async organizer is enabled by `ENABLE_ASYNC_ORGANIZER=true`. The main request writes a raw event and returns to the user first. The organizer later uses `MEMORY_ORGANIZER_MODEL` to produce structured memory patches. This creates an eventually consistent memory loop: the current response is fast, and the next response can benefit from newly organized memory.
+异步整理器由 `ENABLE_ASYNC_ORGANIZER=true` 启用。主请求会先写入 raw event 并立即返回给用户，整理器随后使用 `MEMORY_ORGANIZER_MODEL` 生成结构化记忆补丁。这形成了一个“最终一致”的记忆循环：当前回答保持快速，下一次分析则可以受益于刚刚整理出的长期记忆。
 
-## Data Safety Boundary
+## 数据安全边界
 
-The repository intentionally excludes runtime secrets and user data:
+仓库刻意排除了运行时密钥和用户数据：
 
 - `.env`
 - `local_data/`
 - `user_data/`
 - `manual_exports/`
-- logs
-- generated PDFs
-- virtual environments
+- 日志文件
+- 生成的 PDF 报告
+- Python 虚拟环境
 - `node_modules/`
 
-Use `env.template` as the environment variable reference and keep real API keys outside Git.
+请使用 `env.template` 作为环境变量参考，真实 API Key 不应进入 Git。
 
-## Run Locally
+## 本地运行
 
 ```powershell
 python -m venv .venv
@@ -166,5 +166,4 @@ copy env.template .env
 .\.venv\Scripts\python.exe app_simplified.py
 ```
 
-Before running AI features, configure the required provider keys in `.env`.
-
+运行 AI 功能前，需要在 `.env` 中配置对应模型和服务的 API Key。
