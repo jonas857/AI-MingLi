@@ -214,4 +214,4 @@ copy env.template .env
 
 ## 许可证
 
-本项目采用 Apache License 2.0 开源许可证。相比 MIT，Apache 2.0 增加了更明确的专利授权、修改声明和再分发要求。
+本项目采用 Apache License 2.0 开源许可证。
