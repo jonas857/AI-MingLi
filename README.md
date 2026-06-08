@@ -202,6 +202,16 @@ copy env.template .env
 
 运行 AI 功能前，需要在 `.env` 中配置对应模型和服务的 API Key。
 
+## 支持项目
+
+如果这个项目对你有帮助，欢迎通过赞赏支持服务器和模型调用成本。
+
+- 商业合作或定制部署请通过 issue / 邮箱联系。
+
+<p align="center">
+  <img src="docs/images/support-reward-code.png" alt="Jonas 的赞赏码" width="360">
+</p>
+
 ## 许可证
 
 本项目采用 Apache License 2.0 开源许可证。相比 MIT，Apache 2.0 增加了更明确的专利授权、修改声明和再分发要求。
